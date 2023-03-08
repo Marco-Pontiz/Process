@@ -3,6 +3,7 @@ import session from 'express-session';
 import apiRoutes from './routes/indexRoutes.js';
 import * as dotenv from 'dotenv';
 import passport from 'passport';
+import parseArgs from 'minimist';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 dotenv.config();
@@ -85,7 +86,24 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
-const PORT = process.env.PORT;
+const options = {
+    alias: {
+        m:'modo',
+        p:'puerto',
+        d:false
+    },
+    default: {
+        modo:'prod',
+        puerto: 8080,
+        debug: false
+    }
+}
+
+const commandLineArgs = process.argv.slice(2);
+
+const {modo, puerto, debug, _ } = parseArgs(commandLineArgs, options);
+
+const PORT = puerto;
 
 const server = app.listen(PORT, () => {
     console.log(`Server started on port http://localhost:${PORT}. at ${new Date().toLocaleString()}`)
